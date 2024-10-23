@@ -1,0 +1,128 @@
+Source Code:
+
+
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
+
+class Stock {
+    private String symbol;
+    private double price;
+
+    public Stock(String symbol, double price) {
+        this.symbol = symbol;
+        this.price = price;
+    }
+
+    public String getSymbol() {
+        return symbol;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+}
+
+class Portfolio {
+    private Map<String, Integer> stocks = new HashMap<>();
+
+    public void buyStock(String symbol, int quantity) {
+        stocks.put(symbol, stocks.getOrDefault(symbol, 0) + quantity);
+    }
+
+    public void sellStock(String symbol, int quantity) {
+        if (stocks.containsKey(symbol)) {
+            int currentQuantity = stocks.get(symbol);
+            if (currentQuantity >= quantity) {
+                stocks.put(symbol, currentQuantity - quantity);
+            } else {
+                System.out.println("Not enough shares to sell.");
+            }
+        } else {
+            System.out.println("Stock not in portfolio.");
+        }
+    }
+
+    public void printPortfolio() {
+        System.out.println("Current Portfolio:");
+        for (Map.Entry<String, Integer> entry : stocks.entrySet()) {
+            System.out.println("Stock: " + entry.getKey() + ", Quantity: " + entry.getValue());
+        }
+    }
+}
+
+class StockMarket {
+    private Map<String, Stock> stocks = new HashMap<>();
+
+    public void addStock(String symbol, double price) {
+        stocks.put(symbol, new Stock(symbol, price));
+    }
+
+    public Stock getStock(String symbol) {
+        return stocks.get(symbol);
+    }
+
+    public void printMarketData() {
+        System.out.println("Market Data:");
+        for (Stock stock : stocks.values()) {
+            System.out.println("Symbol: " + stock.getSymbol() + ", Price: $" + stock.getPrice());
+        }
+    }
+}
+
+public class StockTradingPlatform {
+    public static void main(String[] args) {
+        StockMarket market = new StockMarket();
+        Portfolio portfolio = new Portfolio();
+        Scanner scanner = new Scanner(System.in);
+
+        // Adding some stocks to the market
+        market.addStock("AAPL", 150.00);
+        market.addStock("GOOGL", 2800.00);
+        market.addStock("AMZN", 3400.00);
+
+        while (true) {
+            System.out.println("\n1. View Market Data");
+            System.out.println("2. Buy Stock");
+            System.out.println("3. Sell Stock");
+            System.out.println("4. View Portfolio");
+            System.out.println("5. Exit");
+            System.out.print("Choose an option: ");
+            int choice = scanner.nextInt();
+
+            switch (choice) {
+                case 1:
+                    market.printMarketData();
+                    break;
+                case 2:
+                    System.out.print("Enter stock symbol to buy: ");
+                    String buySymbol = scanner.next();
+                    System.out.print("Enter quantity: ");
+                    int buyQuantity = scanner.nextInt();
+                    portfolio.buyStock(buySymbol, buyQuantity);
+                    break;
+                case 3:
+                    System.out.print("Enter stock symbol to sell: ");
+                    String sellSymbol = scanner.next();
+                    System.out.print("Enter quantity: ");
+                    int sellQuantity = scanner.nextInt();
+                    portfolio.sellStock(sellSymbol, sellQuantity);
+                    break;
+                case 4:
+                    portfolio.printPortfolio();
+                    break;
+                case 5:
+                    System.out.println("Exiting...");
+                    scanner.close();
+                    return;
+                default:
+                    System.out.println("Invalid option. Please try again.");
+            }
+        }
+    }
+}
